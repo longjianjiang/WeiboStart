@@ -7,7 +7,8 @@
 //
 
 #import "AppDelegate.h"
-
+#import "UIView+Extension.h"
+#import "Masonry.h"
 @interface AppDelegate ()
 
 @end
@@ -16,7 +17,56 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    [NSThread sleepForTimeInterval:2.0];
+    [_window makeKeyAndVisible];
+    
+    //白色背景View
+    UIView *bgView = [[UIView alloc] init];
+    bgView.backgroundColor = [UIColor whiteColor];
+    [self.window addSubview:bgView];
+    [bgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(self.window.mas_centerY);
+        make.centerX.mas_equalTo(self.window.mas_centerX);
+        make.size.mas_equalTo(self.window.bounds.size);
+    }];
+    //头像View
+    UIImageView *iconView = [[UIImageView alloc] init];
+    iconView.image = [UIImage imageNamed:@"icon"];
+    iconView.size = iconView.image.size;
+    [bgView addSubview:iconView];
+    [iconView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.mas_equalTo(bgView.mas_centerX);
+        make.centerY.mas_equalTo(bgView.mas_centerY).offset(-75);
+        //        make.size.mas_equalTo(iconView.image.size);
+        make.width.mas_equalTo(70);
+        make.height.mas_equalTo(70);
+    }];
+    //文字label
+    UILabel *textLabel = [[UILabel alloc] init];
+    textLabel.textAlignment = NSTextAlignmentCenter;
+    textLabel.font = [UIFont systemFontOfSize:15];
+    textLabel.textColor = [UIColor orangeColor];
+    textLabel.text = @"欢迎回来";
+    [bgView addSubview:textLabel];
+    [textLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.mas_equalTo(iconView.mas_centerX);
+        make.centerY.mas_equalTo(iconView.mas_centerY).offset(30);
+        make.width.mas_equalTo(100);
+        make.height.mas_equalTo(35);
+    }];
+    textLabel.hidden = YES;
+    //添加动画
+    [UIView animateWithDuration:2.0 animations:^{
+        iconView.layer.transform = CATransform3DMakeTranslation(0, -20, 0);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            textLabel.hidden = NO;
+        });
+    } completion:^(BOOL finished) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [bgView removeFromSuperview];
+        });
+    }];
+
     return YES;
 }
 
